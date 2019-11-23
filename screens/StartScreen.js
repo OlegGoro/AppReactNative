@@ -1,7 +1,9 @@
 import React from 'react';
 import { Button, Image, View, StyleSheet, TouchableOpacity, Text } from 'react-native';
-import { ImagePicker, Permissions } from 'expo';
-import { Constants, Location } from 'expo';
+import * as ImagePicker from 'expo-image-picker';
+import * as Permissions from 'expo-permissions';
+import * as Location from 'expo-location';
+import Constants from 'expo-constants';
 import { ButtonGroup } from 'react-native-elements';
 import { createAppContainer, createStackNavigator, StackActions, NavigationActions } from 'react-navigation'; // Version can be specified in package.json
 
@@ -108,7 +110,7 @@ export default class SearchScreen extends React.Component {
 
   _pickImage = async () => {
     if (photo_is_chosen == 0) {
-      const { Permissions } = Expo;
+
       const { status: cameraPermission } = await Permissions.askAsync(Permissions.CAMERA);
       const { status: cameraRollPermission } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
       if (cameraPermission === 'granted' && cameraRollPermission === 'granted') {
@@ -143,7 +145,7 @@ export default class SearchScreen extends React.Component {
       data.append("iam", this.state.index)
       data.append('image', );
       data.append("image", {uri: result.uri, name: "avatar.jpg", type: 'multipart/form-data'})
-      fetch("http://192.168.1.173:8000/api/v1/addclaim/", {
+      fetch("http://192.168.0.107:8000/api/v1/addclaim/", {
         method: "POST",
         headers: {
           'Content-Type': 'multipart/form-data',
