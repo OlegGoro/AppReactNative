@@ -3,7 +3,6 @@ import { Button, Image, View, StyleSheet, TouchableOpacity, Text } from 'react-n
 import { ImagePicker } from 'expo';
 import { Constants } from 'expo';
 import { ButtonGroup } from 'react-native-elements';
-import { createStackNavigator } from 'react-navigation';
 
 import "@expo/vector-icons";
 

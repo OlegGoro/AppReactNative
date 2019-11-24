@@ -5,10 +5,24 @@ import * as Permissions from 'expo-permissions';
 import * as Location from 'expo-location';
 import Constants from 'expo-constants';
 import { ButtonGroup } from 'react-native-elements';
-import { createAppContainer, createStackNavigator, StackActions, NavigationActions } from 'react-navigation'; // Version can be specified in package.json
+import { StackActions, NavigationActions } from 'react-navigation'; // Version can be specified in package.json
+
+
 
 
 import "@expo/vector-icons";
+
+function makeid(length) {
+   var result           = '';
+   var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+   var charactersLength = characters.length;
+   for ( var i = 0; i < length; i++ ) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+   }
+   return result;
+};
+
+var deviceid = makeid(5);
 
 export default class SearchScreen extends React.Component {
 
@@ -19,6 +33,7 @@ export default class SearchScreen extends React.Component {
     index: 0,
     index2: 0,
     index3: 0,
+    index4: deviceid,
     buttonstate: 0,
     textbutton: "UPLOAD PHOTO",
     location: null,
@@ -136,7 +151,7 @@ export default class SearchScreen extends React.Component {
       latitude = location.coords.latitude;
 
       const data = new FormData();
-      data.append("name", this.state.index3)
+      data.append("name", this.state.index4)
       data.append("goal", this.state.index3)
       data.append("lookfor", this.state.index2)
       data.append("lat", latitude)
@@ -163,12 +178,7 @@ export default class SearchScreen extends React.Component {
     }
 
 
-    this.props.navigation.dispatch(StackActions.reset({
-      index: 0,
-      actions: [
-        NavigationActions.navigate({ routeName: 'Search' })
-      ],
-    }))
+    this.props.navigation.navigate('Dashboard');
   }
 }
 }

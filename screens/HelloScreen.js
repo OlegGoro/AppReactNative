@@ -3,7 +3,7 @@ import { Button, Image, View, StyleSheet, TouchableOpacity, Text } from 'react-n
 import { ImagePicker } from 'expo';
 import { Constants } from 'expo';
 import { ButtonGroup } from 'react-native-elements';
-import { createAppContainer, createStackNavigator, StackActions, NavigationActions } from 'react-navigation'; // Version can be specified in package.json
+import { StackActions, NavigationActions } from 'react-navigation'; // Version can be specified in package.json
 
 
 import "@expo/vector-icons";
