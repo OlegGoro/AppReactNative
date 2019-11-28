@@ -8,22 +8,44 @@ import {
   ImageBackground,              // Container component
 } from 'react-native';
 import Dimensions from 'Dimensions';
+import { AsyncStorage } from 'react-native';
 
 // Detect screen size to calculate row height
 const screen = Dimensions.get('window');
+var deviceid;
+var myname
 
 export default class Row extends Component {
+
+  _retrieveData = async () => {
+    try {
+      deviceid = await AsyncStorage.getItem('deviceid');
+      console.log("DATA" + deviceid);
+    } catch (error) {
+     console.log("NO DATA");
+    }
+  };
+
+
+
+componentDidMount() {
+  // Fetch Data
+  this._retrieveData();
+}
 
   // Extract movie and onPress props passed from List component
   render({ claim } = this.props) {
     // Extract values from movie object
-    const {image, lookfor, lat, lon, goal} = claim;
+    const {name, image, lookfor, lat, lon, goal} = claim;
+    myname = name;
+    console.log("ClaimName " + myname);
     if (image !== null ) {
     test = image.split('/').slice(9,10);
     pasteimage = "http://192.168.0.107:8000/static/media/" + test
   } else {
     pasteimage = "https://doc.louisiana.gov/assets/camaleon_cms/image-not-found-4a963b95bf081c3ea02923dceaeb3f8085e1a654fc54840aac61a57a60903fef.png"
   }
+
   return (
       <View style={{flex: 1, paddingLeft: 20, paddingRight: 20, paddingTop: 15, paddingBottom: 12}}>
         <View style={styles.block}>
@@ -40,7 +62,9 @@ export default class Row extends Component {
                         <Image source={require("./Cross.png")} style={{ width: 35, height: 35 }} />
                       </View>
                       <View style={{flex:4, alignItems: 'center', justifyContent: 'center', shadowRadius: 10, shadowOpacity: 0.2, shadowColor: '#fcefef'}}>
-                        <Image source={require("./LikeIcon.png")} style={{ width: 70, height: 70}} />
+                      <TouchableOpacity onPress={this._addlike}>
+                        <Image source={require("./LikeIcon.png")} style={{ width: 70, height: 70}}   />
+                        </TouchableOpacity>
                       </View>
                       <View style={{flex:2, alignItems: 'center', justifyContent: 'center'}}>
                         <Image source={require("./km.png")} style={{ width: 35, height: 35 }} />
@@ -54,6 +78,23 @@ export default class Row extends Component {
 
     );
   }
+
+  _addlike = async () => {
+      const data = new FormData();
+      data.append("MyName", deviceid)
+      data.append("ClaimName", myname)
+      console.log("ClaimName2 " + myname);
+      console.log("MyName  " + deviceid);
+      fetch("http://192.168.0.107:8000/api/v1/addlike/", {
+        method: "PUT",
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        body: data,
+      }).then(res => {
+  console.log(res)
+});
+}
 
 }
 

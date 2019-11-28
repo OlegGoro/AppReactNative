@@ -6,6 +6,7 @@ import * as Location from 'expo-location';
 import Constants from 'expo-constants';
 import { ButtonGroup } from 'react-native-elements';
 import { StackActions, NavigationActions } from 'react-navigation'; // Version can be specified in package.json
+import { AsyncStorage } from 'react-native';
 
 
 
@@ -22,14 +23,56 @@ function makeid(length) {
    return result;
 };
 
-var deviceid = makeid(5);
+var deviceid
+
 
 export default class SearchScreen extends React.Component {
 
+  _retrieveData = async () => {
+    try {
+      deviceid = await AsyncStorage.getItem('deviceid');
+      REQUEST_URL = 'http://192.168.0.107:8000/api/v1/claims/?name=' + deviceid
+      this._CheckExistClaim()
+    } catch (error) {
+     console.log("NO DATA");
+    }
+  };
 
+  _CheckExistClaim = () => {
+    fetch(REQUEST_URL)
+    .then((response) => response.json())
+    .then((responseJson) => {
+     if (responseJson[0] !== undefined) {
+       console.log("My old name: " + deviceid);
+       console.log("Response log: " + responseJson[0])
+       this.props.navigation.navigate('Dashboard');
+     } else {
+       console.log("Response log: " + responseJson[0])
+       this._storeData();
+     }
+    })
+    .catch((error) =>{
+      console.error(error);
+    });
+
+  };
+
+  _storeData = async () => {
+    deviceid = makeid(5);
+    try {
+      await AsyncStorage.setItem('deviceid', deviceid);
+      console.log("My new name: " + deviceid);
+    } catch (error) {
+      // Error saving data
+    }
+  };
+
+  componentDidMount() {
+    this._retrieveData();
+  }
 
   state = {
-    image: "https://facebook.github.io/react/logo-og.png",
+    image: "https://i.ibb.co/6wPWnCj/avatar.png",
     index: 0,
     index2: 0,
     index3: 0,
@@ -151,12 +194,12 @@ export default class SearchScreen extends React.Component {
       latitude = location.coords.latitude;
 
       const data = new FormData();
-      data.append("name", this.state.index4)
+      data.append("name", deviceid)
       data.append("goal", this.state.index3)
       data.append("lookfor", this.state.index2)
       data.append("lat", latitude)
       data.append("lon", longitude)
-      data.append("esttime", 1500)
+      data.append("esttime", 2000)
       data.append("iam", this.state.index)
       data.append('image', );
       data.append("image", {uri: result.uri, name: "avatar.jpg", type: 'multipart/form-data'})

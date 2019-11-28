@@ -5,13 +5,21 @@ import Row from './Row';
 import { AsyncStorage } from 'react-native';
 
 var deviceid
+var wholikesme
+var wholikesme2
+
+var REQUEST_URL = 'http://192.168.0.107:8000/api/v1/claims/?name=';
 
  export default class SearchScreen extends Component {
 
    _retrieveData = async () => {
      try {
        deviceid = await AsyncStorage.getItem('deviceid');
-       this._fetchData();
+       if (deviceid !== null) {
+         REQUEST_URL = 'http://192.168.0.107:8000/api/v1/claims/?name=' + deviceid
+         console.log("REQUEST_URL= " + REQUEST_URL);
+         this._fetchData();
+       }
      } catch (error) {
       console.log("NO DATA");
      }
@@ -28,14 +36,10 @@ var deviceid
  }
 
    /**
-    * Store the data for ListView
-    */
-
-   /**
     * Call _fetchData after component has been mounted
     */
    componentDidMount() {
-     this._retrieveData()
+     this._retrieveData();
    }
 
 
@@ -44,13 +48,35 @@ var deviceid
     * Prepare demo data for ListView component
     */
    _fetchData = () => {
-     fetch("http://192.168.0.107:8000/api/v1/claims/?iam__icontains=0")
+     fetch(REQUEST_URL)
      .then((response) => response.json())
      .then((responseJson) => {
-      const filteredJson = responseJson.filter(x => x.name !== deviceid);
+      data = responseJson[0]
+      wholikesme = data.wholikes
+      console.log(wholikesme)
+      console.log(deviceid);
+      this._fetchData2();
+     })
+     .catch((error) =>{
+       console.error(error);
+     });
+
+   };
+
+
+
+
+   /**
+    * Prepare demo data for ListView component
+    */
+   _fetchData2 = () => {
+
+     fetch("http://192.168.0.107:8000/api/v1/claims/?name=" + wholikesme )
+     .then((response) => response.json())
+     .then((responseJson) => {
 
        this.setState({
-         dataSource: this.state.dataSource.cloneWithRows(filteredJson),
+         dataSource: this.state.dataSource.cloneWithRows(responseJson),
          // Data has been refreshed by now
          isRefreshing: false,
        });
@@ -65,6 +91,7 @@ var deviceid
     * Render a row
     */
    _renderRow = (claim, rowID) => {
+
      return (
        <Row
          // Pass movie object
@@ -75,8 +102,8 @@ var deviceid
          }}
        />
      );
-   }
 
+   }
 
    /**
     * Renders the list
@@ -88,7 +115,7 @@ var deviceid
          dataSource={this.state.dataSource}
          // Row renderer method
          renderRow={this._renderRow}
-         renderHeader={() => <View style={{padding:20, paddingTop:37}}><Text style={{fontSize:33, fontFamily: 'Helvetica', color: 'white', letterSpacing: 1, shadowRadius: 13, shadowOpacity: 0.35, shadowColor: 'white'}}>Want to meet</Text></View>}
+         renderHeader={() => <View style={{padding:20, paddingTop:37}}><Text style={{fontSize:33, fontFamily: 'Helvetica', color: 'white', letterSpacing: 1, shadowRadius: 13, shadowOpacity: 0.35, shadowColor: 'white'}}>They like you</Text></View>}
          // Refresh the list on pull down
          refreshControl={
            <RefreshControl
