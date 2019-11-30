@@ -24,7 +24,7 @@ function makeid(length) {
 };
 
 var deviceid
-
+var photo_is_chosen = 0;
 
 export default class SearchScreen extends React.Component {
 
@@ -95,7 +95,7 @@ export default class SearchScreen extends React.Component {
 
 
   render() {
-    photo_is_chosen = 0;
+
     let { image } = this.state;
     const { selectedIndex } = this.state
     return (
@@ -199,7 +199,7 @@ export default class SearchScreen extends React.Component {
       data.append("lookfor", this.state.index2)
       data.append("lat", latitude)
       data.append("lon", longitude)
-      data.append("esttime", 2000)
+      data.append("esttime", 125)
       data.append("iam", this.state.index)
       data.append('image', );
       data.append("image", {uri: result.uri, name: "avatar.jpg", type: 'multipart/form-data'})

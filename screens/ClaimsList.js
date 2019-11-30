@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
-import { Image, StyleSheet, Text, View, ListView, ActivityIndicator, RefreshControl   } from 'react-native';
+import { Image, StyleSheet, Text, View, FlatList, ActivityIndicator, RefreshControl, NativeModules    } from 'react-native';
 import Constants from 'expo-constants';
 import Row from './Row';
 import { AsyncStorage } from 'react-native';
+
+
 
 var deviceid
 
@@ -20,22 +22,19 @@ var deviceid
    constructor(props){
    super(props);
    this.state = {
-      dataSource: new ListView.DataSource({rowHasChanged: (row1, row2) => row1 !== row2,}),
-      // Used for RefreshControl
+      _data: null,
       isRefreshing: false,
       demoData: [],
     }
  }
 
-   /**
-    * Store the data for ListView
-    */
+   closemyclaim(){
+     NativeModules.DevSettings.reload();
+   }
 
-   /**
-    * Call _fetchData after component has been mounted
-    */
    componentDidMount() {
      this._retrieveData()
+     setInterval(this._fetchData, 200)
    }
 
 
@@ -47,35 +46,30 @@ var deviceid
      fetch("http://192.168.0.107:8000/api/v1/claims/?iam__icontains=0")
      .then((response) => response.json())
      .then((responseJson) => {
-      const filteredJson = responseJson.filter(x => x.name !== deviceid);
+      const filteredJson = responseJson.filter(x => x.name !== deviceid)
+      const filteredJson2 = filteredJson.filter(item => item.wholikes.indexOf(deviceid) === -1);
 
        this.setState({
-         dataSource: this.state.dataSource.cloneWithRows(filteredJson),
-         // Data has been refreshed by now
-         isRefreshing: false,
+         _data: filteredJson2,
+         isRefreshing: false ,
        });
      })
      .catch((error) =>{
-       console.error(error);
+        this.closemyclaim()
      });
 
    }
 
+   _update = () => {
+     this.setState({
+       isRefreshing: true ,
+     });
+
+     this._fetchData
+   }
    /**
     * Render a row
     */
-   _renderRow = (claim, rowID) => {
-     return (
-       <Row
-         // Pass movie object
-         claim={claim}
-         // Pass a function to handle row presses
-         onPress={()=>{
-           // Navigate to a separate movie detail screen
-         }}
-       />
-     );
-   }
 
 
    /**
@@ -83,19 +77,20 @@ var deviceid
     */
    render() {
      return (
-       <ListView
-         // Data source from state
-         dataSource={this.state.dataSource}
-         // Row renderer method
-         renderRow={this._renderRow}
-         renderHeader={() => <View style={{padding:20, paddingTop:37}}><Text style={{fontSize:33, fontFamily: 'Helvetica', color: 'white', letterSpacing: 1, shadowRadius: 13, shadowOpacity: 0.35, shadowColor: 'white'}}>Want to meet</Text></View>}
-         // Refresh the list on pull down
-         refreshControl={
-           <RefreshControl
-             refreshing={this.state.isRefreshing}
-             onRefresh={this._fetchData}
+       <FlatList
+         data={this.state._data}
+         renderItem={({item: claim}) => { return (
+           <Row
+             // Pass movie object
+             claim={claim}
+
            />
-         }
+         )}}
+         ListHeaderComponent={() => <View style={{padding:20, paddingTop:37}}><Text style={{fontSize:33, fontFamily: 'Helvetica', color: 'white', letterSpacing: 1, shadowRadius: 13, shadowOpacity: 0.35, shadowColor: 'white'}}>Want to meet</Text></View>}
+         keyExtractor={(item, index) => index}
+         onRefresh={() => this._update}
+         refreshing={this.state.isRefreshing}
+
        />
      );
    }

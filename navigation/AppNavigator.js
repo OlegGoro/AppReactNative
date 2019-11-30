@@ -14,7 +14,10 @@ import Icon from '@expo/vector-icons/Ionicons';
 
 
 
+
 const DashboardStackNavigator = createBottomTabNavigator(
+
+
 
   {
     FeedStack: {

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Image, StyleSheet, Text, View, ListView, ActivityIndicator, RefreshControl   } from 'react-native';
+import { Image, StyleSheet, Text, View, FlatList, ActivityIndicator, RefreshControl, NativeModules    } from 'react-native';
 import Constants from 'expo-constants';
 import Row from './Row';
 import { AsyncStorage } from 'react-native';
@@ -7,6 +7,7 @@ import { AsyncStorage } from 'react-native';
 var deviceid
 var wholikesme
 var wholikesme2
+var refresherstate
 
 var REQUEST_URL = 'http://192.168.0.107:8000/api/v1/claims/?name=';
 
@@ -28,18 +29,21 @@ var REQUEST_URL = 'http://192.168.0.107:8000/api/v1/claims/?name=';
    constructor(props){
    super(props);
    this.state = {
-      dataSource: new ListView.DataSource({rowHasChanged: (row1, row2) => row1 !== row2,}),
+      _data: null,
       // Used for RefreshControl
       isRefreshing: false,
       demoData: [],
     }
  }
-
+ closemyclaim(){
+   NativeModules.DevSettings.reload();
+ }
    /**
     * Call _fetchData after component has been mounted
     */
    componentDidMount() {
      this._retrieveData();
+     setInterval(this._fetchData, 200)
    }
 
 
@@ -58,7 +62,7 @@ var REQUEST_URL = 'http://192.168.0.107:8000/api/v1/claims/?name=';
       this._fetchData2();
      })
      .catch((error) =>{
-       console.error(error);
+      this.closemyclaim()
      });
 
    };
@@ -74,15 +78,14 @@ var REQUEST_URL = 'http://192.168.0.107:8000/api/v1/claims/?name=';
      fetch("http://192.168.0.107:8000/api/v1/claims/?name=" + wholikesme )
      .then((response) => response.json())
      .then((responseJson) => {
-
+      const filteredJson = responseJson.filter(item => item.wholikes.indexOf(deviceid) === -1);
        this.setState({
-         dataSource: this.state.dataSource.cloneWithRows(responseJson),
-         // Data has been refreshed by now
-         isRefreshing: false,
+         _data: filteredJson,
+         isRefreshing: false ,
        });
      })
      .catch((error) =>{
-       console.error(error);
+      this.closemyclaim()
      });
 
    }
@@ -105,24 +108,33 @@ var REQUEST_URL = 'http://192.168.0.107:8000/api/v1/claims/?name=';
 
    }
 
-   /**
-    * Renders the list
-    */
+   _update = () => {
+     this.setState({
+       isRefreshing: true ,
+     });
+
+     this._fetchData2
+   }
+
    render() {
      return (
-       <ListView
-         // Data source from state
-         dataSource={this.state.dataSource}
-         // Row renderer method
-         renderRow={this._renderRow}
-         renderHeader={() => <View style={{padding:20, paddingTop:37}}><Text style={{fontSize:33, fontFamily: 'Helvetica', color: 'white', letterSpacing: 1, shadowRadius: 13, shadowOpacity: 0.35, shadowColor: 'white'}}>They like you</Text></View>}
-         // Refresh the list on pull down
-         refreshControl={
-           <RefreshControl
-             refreshing={this.state.isRefreshing}
-             onRefresh={this._fetchData}
+       <FlatList
+         data={this.state._data}
+         renderItem={({item: claim}) => { return (
+           <Row
+             // Pass movie object
+             claim={claim}
+             // Pass a function to handle row presses
+             onPress={()=>{
+               // Navigate to a separate movie detail screen
+             }}
            />
-         }
+         )}}
+         ListHeaderComponent={() => <View style={{padding:20, paddingTop:37}}><Text style={{fontSize:33, fontFamily: 'Helvetica', color: 'white', letterSpacing: 1, shadowRadius: 13, shadowOpacity: 0.35, shadowColor: 'white'}}>They like you</Text></View>}
+         keyExtractor={(item, index) => index}
+         onRefresh={() => this._update}
+         refreshing={this.state.isRefreshing}
+
        />
      );
    }

@@ -17,6 +17,8 @@ var myname
 
 export default class Row extends Component {
 
+
+
   _retrieveData = async () => {
     try {
       deviceid = await AsyncStorage.getItem('deviceid');
@@ -36,66 +38,19 @@ componentDidMount() {
   // Extract movie and onPress props passed from List component
   render({ claim } = this.props) {
     // Extract values from movie object
-    const {name, image, lookfor, lat, lon, goal} = claim;
-    myname = name;
-    console.log("ClaimName " + myname);
-    if (image !== null ) {
-    test = image.split('/').slice(9,10);
-    pasteimage = "http://192.168.0.107:8000/static/media/" + test
-  } else {
-    pasteimage = "https://doc.louisiana.gov/assets/camaleon_cms/image-not-found-4a963b95bf081c3ea02923dceaeb3f8085e1a654fc54840aac61a57a60903fef.png"
-  }
+    const {users} = claim;
+    chatusers = users;
 
   return (
       <View style={{flex: 1, paddingLeft: 20, paddingRight: 20, paddingTop: 15, paddingBottom: 12}}>
         <View style={styles.block}>
           <View style={{flex: 1}}></View>
-              <ImageBackground
-                source={{uri: pasteimage}}
-                style={styles.imageBackground}
-                >
-                <View style={{flex: 6}}>
-                </View>
-                  <View style={{position: 'absolute', bottom: -30, left: 0, right: 0}}>
-                    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', flexDirection: 'row'}}>
-                      <View style={{flex:2, alignItems: 'center', justifyContent: 'center'}}>
-                        <Image source={require("./Cross.png")} style={{ width: 35, height: 35 }} />
-                      </View>
-                      <View style={{flex:4, alignItems: 'center', justifyContent: 'center', shadowRadius: 10, shadowOpacity: 0.2, shadowColor: '#fcefef'}}>
-                      <TouchableOpacity onPress={this._addlike}>
-                        <Image source={require("./LikeIcon.png")} style={{ width: 70, height: 70}}   />
-                        </TouchableOpacity>
-                      </View>
-                      <View style={{flex:2, alignItems: 'center', justifyContent: 'center'}}>
-                        <Image source={require("./km.png")} style={{ width: 35, height: 35 }} />
-                      </View>
-                    </View>
-                  </View>
-                </ImageBackground>
-              <View style={{flex: 2, padding: 15, paddingTop: 45}}><Text style={{color:'white', fontFamily: 'Helvetica', fontSize:15,}}>Attention Social Media Geeks! @garyvee is an absolute #MustFollow on Twitter! @AskAaronLee @PostPlanner http://bit.ly/1tvyiv6</Text></View>
+              <View style={{flex: 2, padding: 15, paddingTop: 45}}><Text style={{color:'white', fontFamily: 'Helvetica', fontSize:15,}}>Тестовый чат открыт</Text></View>
             </View>
           </View>
 
     );
   }
-
-  _addlike = async () => {
-      const data = new FormData();
-      data.append("MyName", deviceid)
-      data.append("ClaimName", myname)
-      console.log("ClaimName2 " + myname);
-      console.log("MyName  " + deviceid);
-      fetch("http://192.168.0.107:8000/api/v1/addlike/", {
-        method: "PUT",
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-        body: data,
-      }).then(res => {
-  console.log(res)
-});
-}
-
 }
 
 const styles = StyleSheet.create({
@@ -105,7 +60,7 @@ const styles = StyleSheet.create({
   },
   // Background image
   imageBackground: {
-    flex: 8,         // Divide screen height by 3
+    flex: 2,         // Divide screen height by 3
     justifyContent: 'center',           // Center vertically
     alignItems: 'stretch',
   },

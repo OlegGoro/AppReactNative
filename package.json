@@ -1,5 +1,6 @@
 {
   "main": "node_modules/expo/AppEntry.js",
+  "name": "FEELS",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
@@ -17,11 +18,11 @@
     "react": "16.8.3",
     "react-native": "https://github.com/expo/react-native/archive/sdk-35.0.0.tar.gz",
     "react-native-elements": "^0.19.1",
-    "react-native-gesture-handler": "^1.5.1",
+    "react-native-gesture-handler": "~1.3.0",
     "react-native-image-picker": "^0.27.2",
-    "react-native-reanimated": "^1.4.0",
+    "react-native-reanimated": "~1.2.0",
     "react-native-safe-area-context": "~0.3.6",
-    "react-native-screens": "1.0.0-alpha.23",
+    "react-native-screens": "~1.0.0-alpha.23",
     "react-navigation": "^4.0.10",
     "react-navigation-drawer": "^2.3.3",
     "react-navigation-stack": "^1.10.3",
