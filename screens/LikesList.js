@@ -18,7 +18,6 @@ var REQUEST_URL = 'http://192.168.0.107:8000/api/v1/claims/?name=';
        deviceid = await AsyncStorage.getItem('deviceid');
        if (deviceid !== null) {
          REQUEST_URL = 'http://192.168.0.107:8000/api/v1/claims/?name=' + deviceid
-         console.log("REQUEST_URL= " + REQUEST_URL);
          this._fetchData();
        }
      } catch (error) {
@@ -57,8 +56,6 @@ var REQUEST_URL = 'http://192.168.0.107:8000/api/v1/claims/?name=';
      .then((responseJson) => {
       data = responseJson[0]
       wholikesme = data.wholikes
-      console.log(wholikesme)
-      console.log(deviceid);
       this._fetchData2();
      })
      .catch((error) =>{

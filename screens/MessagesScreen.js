@@ -36,7 +36,6 @@ var deviceid
      fetch("http://192.168.0.107:8000/api/v1/chatsessions/?user1=" + deviceid + "&user2=" + deviceid)
      .then((response) => response.json())
      .then((responseJson) => {
-       console.log(responseJson)
        this.setState({
          _data: responseJson,
          isRefreshing: false ,

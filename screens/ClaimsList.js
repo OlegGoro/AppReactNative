@@ -7,12 +7,15 @@ import { AsyncStorage } from 'react-native';
 
 
 var deviceid
+var goal
+var lookfor
 
  export default class SearchScreen extends Component {
 
    _retrieveData = async () => {
      try {
        deviceid = await AsyncStorage.getItem('deviceid');
+       lookfor = await AsyncStorage.getItem('lookfor');
        this._fetchData();
      } catch (error) {
       console.log("NO DATA");
@@ -43,7 +46,7 @@ var deviceid
     * Prepare demo data for ListView component
     */
    _fetchData = () => {
-     fetch("http://192.168.0.107:8000/api/v1/claims/?iam__icontains=0")
+     fetch("http://192.168.0.107:8000/api/v1/claims/?iam=" + lookfor)
      .then((response) => response.json())
      .then((responseJson) => {
       const filteredJson = responseJson.filter(x => x.name !== deviceid)

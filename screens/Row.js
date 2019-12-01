@@ -13,20 +13,60 @@ import { AsyncStorage } from 'react-native';
 // Detect screen size to calculate row height
 const screen = Dimensions.get('window');
 var deviceid;
-var myname
+var myname;
+var claimgoal;
+var distance;
+var lat2;
+var lon2;
 
 export default class Row extends Component {
+
+  distance  =  (lat1,lon1,lat2,lon2) => {
+  	var R = 6371; // km (change this constant to get miles)
+  	var dLat = (lat2-lat1) * Math.PI / 180;
+  	var dLon = (lon2-lon1) * Math.PI / 180;
+  	var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+  		Math.cos(lat1 * Math.PI / 180 ) * Math.cos(lat2 * Math.PI / 180 ) *
+  		Math.sin(dLon/2) * Math.sin(dLon/2);
+  	var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  	var d = R * c;
+  	if (d>1) return Math.round(d)+"km";
+  	else if (d<=1) return Math.round(d*1000)+"m";
+  	return d;
+  }
+
+
 
   _retrieveData = async () => {
     try {
       deviceid = await AsyncStorage.getItem('deviceid');
-      console.log("DATA" + deviceid);
+      longitude = await AsyncStorage.getItem('longitude');
+      latitude = await AsyncStorage.getItem('latitude');
+      distance = this.distance(latitude, longitude, lat2, lon2);
+      this.setState({
+        distance: distance,
+      });
+      if (claimgoal == 1){
+        this.setState({
+          goal: "Looking for sex",
+        });
+      } else {
+        this.setState({
+          goal: "Looking for talk",
+        });
+      }
     } catch (error) {
      console.log("NO DATA");
     }
   };
 
-
+  constructor(){
+  super();
+  this.state = {
+     goal: '1',
+     distance: '5',
+   }
+  };
 
 componentDidMount() {
   // Fetch Data
@@ -38,7 +78,9 @@ componentDidMount() {
     // Extract values from movie object
     const {name, image, lookfor, lat, lon, goal} = claim;
     myname = name;
-    console.log("ClaimName " + myname);
+    claimgoal = goal;
+    lat2 = lat;
+    lon2 = lon;
     if (image !== null ) {
     test = image.split('/').slice(9,10);
     pasteimage = "http://192.168.0.107:8000/static/media/" + test
@@ -49,7 +91,11 @@ componentDidMount() {
   return (
       <View style={{flex: 1, paddingLeft: 20, paddingRight: 20, paddingTop: 15, paddingBottom: 12}}>
         <View style={styles.block}>
-          <View style={{flex: 1}}></View>
+        <View style={{paddingRight: 10, paddingTop: 10, paddingBottom:10, paddingLeft:10, flexDirection: 'row', alignContent: 'space-between'}}>
+          <Text style={{color: "white", fontSize: 18, textAlign: 'left', alignSelf: 'flex-start'}}> {this.state.distance} /</Text>
+          <Text style={{color: "white", fontSize: 18, textAlign: 'right', alignSelf: 'flex-end'}}>  {this.state.goal}  </Text>
+        </View>
+          <View></View>
               <ImageBackground
                 source={{uri: pasteimage}}
                 style={styles.imageBackground}
@@ -83,8 +129,6 @@ componentDidMount() {
       const data = new FormData();
       data.append("MyName", deviceid)
       data.append("ClaimName", myname)
-      console.log("ClaimName2 " + myname);
-      console.log("MyName  " + deviceid);
       fetch("http://192.168.0.107:8000/api/v1/addlike/", {
         method: "PUT",
         headers: {

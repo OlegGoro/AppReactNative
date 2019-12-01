@@ -8,7 +8,8 @@ import { ButtonGroup } from 'react-native-elements';
 import { StackActions, NavigationActions } from 'react-navigation'; // Version can be specified in package.json
 import { AsyncStorage } from 'react-native';
 
-
+var longitude
+var latitude
 
 
 import "@expo/vector-icons";
@@ -62,6 +63,17 @@ export default class SearchScreen extends React.Component {
     try {
       await AsyncStorage.setItem('deviceid', deviceid);
       console.log("My new name: " + deviceid);
+    } catch (error) {
+      // Error saving data
+    }
+  };
+
+  _storeDesired = async () => {
+    try {
+      await AsyncStorage.setItem('goal', "" + this.state.index3 + "");
+      await AsyncStorage.setItem('lookfor', "" + this.state.index2 + "");
+      await AsyncStorage.setItem('longitude', "" + longitude + "");
+      await AsyncStorage.setItem('latitude', "" + latitude + "");
     } catch (error) {
       // Error saving data
     }
@@ -192,7 +204,7 @@ export default class SearchScreen extends React.Component {
       let location = await Location.getCurrentPositionAsync({});
       longitude = location.coords.longitude;
       latitude = location.coords.latitude;
-
+      this._storeDesired()
       const data = new FormData();
       data.append("name", deviceid)
       data.append("goal", this.state.index3)
