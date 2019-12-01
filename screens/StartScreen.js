@@ -7,6 +7,7 @@ import Constants from 'expo-constants';
 import { ButtonGroup } from 'react-native-elements';
 import { StackActions, NavigationActions } from 'react-navigation'; // Version can be specified in package.json
 import { AsyncStorage } from 'react-native';
+import Overlay from 'react-native-modal-overlay';
 
 var longitude
 var latitude
@@ -92,7 +93,8 @@ export default class SearchScreen extends React.Component {
     buttonstate: 0,
     textbutton: "UPLOAD PHOTO",
     location: null,
-    errorMessage: null
+    errorMessage: null,
+    modalVisible: false,
   }
 
   updateIndex = (index) => {
@@ -106,13 +108,22 @@ export default class SearchScreen extends React.Component {
   }
 
 
+
+  onClose = () => this.setState({ modalVisible: false});
+  onLoad = () => this.setState({ modalVisible: true});
+
   render() {
+
+
 
     let { image } = this.state;
     const { selectedIndex } = this.state
     return (
 
       <View style={{flex: 1}}>
+      <Overlay visible={this.state.modalVisible} closeOnTouchOutside>
+        <Text>Wait a moment</Text>
+      </Overlay>
         <View style={{flex: 1, backgroundColor: 'powderblue'}}>
         {image &&
           <Image source={{ uri: image }} style={{ flex: 1 }} />}
@@ -201,6 +212,7 @@ export default class SearchScreen extends React.Component {
 
     const { status: locationPermission } = await Permissions.askAsync(Permissions.LOCATION)
     if (locationPermission == 'granted') {
+      this.onLoad()
       let location = await Location.getCurrentPositionAsync({});
       longitude = location.coords.longitude;
       latitude = location.coords.latitude;
