@@ -104,9 +104,7 @@ const screen = Dimensions.get('window');
                        <View style={{flex:2, alignItems: 'center', justifyContent: 'center'}}>
                        </View>
                        <View style={{flex:4, alignItems: 'center', justifyContent: 'center'}}>
-                       <TouchableOpacity onPress={this._addlike}>
-                         <Image source={require("./Cross.png")} style={{ width: 35, height: 35}}   />
-                         </TouchableOpacity>
+
                        </View>
                        <View style={{flex:2, alignItems: 'center', justifyContent: 'center'}}>
                        </View>

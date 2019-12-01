@@ -177,7 +177,7 @@ export default class SearchScreen extends React.Component {
                  />
             </View>
           </View>
-            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginBottom: 20}}>
               <TouchableOpacity style={styles.buttonStyle2} onPress={this._pickImage}>
                <Text style={styles.textStyle}>{this.state.textbutton}</Text>
               </TouchableOpacity>
@@ -252,7 +252,7 @@ export default class SearchScreen extends React.Component {
 
 const styles = StyleSheet.create({
   textStyle: {
-  fontSize:20,
+  fontSize:22,
   color: 'black',
   textAlign: 'center'
   },

@@ -9,6 +9,7 @@ import Likes from '../screens/LikesScreen';
 import Messages from '../screens/MessagesScreen';
 import Profile from '../screens/ProfileScreen';
 import WelcomeScreen from '../screens/StartScreen';
+import HelloScreen from '../screens/HelloScreen';
 import Icon from '@expo/vector-icons/Ionicons';
 
 
@@ -94,8 +95,10 @@ const DashboardStackNavigator = createBottomTabNavigator(
 
 
   const AppSwitchNavigator = createSwitchNavigator({
+    HelloScreen: { screen: HelloScreen },
     Welcome: { screen: WelcomeScreen },
-    Dashboard: { screen: DashboardStackNavigator }
+    Dashboard: { screen: DashboardStackNavigator },
+
   });
 
 export default AppContainer = createAppContainer(AppSwitchNavigator);
